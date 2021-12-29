@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Driver extends Person1 implements Observer {
 	public ArrayList <Ride> rides = new ArrayList <Ride>();
+	public ArrayList <Ride> DriverHistory = new ArrayList <Ride>();
 	Driver(String x, String y) {
 		super(x, y);
 		username=x;
@@ -16,23 +17,19 @@ public class Driver extends Person1 implements Observer {
 	String password;
 	String driving_license;
 	String national_id;
+	String fav_area;
 	public Boolean pending;
+	double balance=0;
 	ArrayList <String> favourite_areas= new ArrayList<String>();
-	public void set_Driver(String u,String p,String m,String e,String n,String d,String a)
+
+	public void add(Ride r)
 	{
-		username=u;
-		mobile_number = m;
-		email=e;
-		password=p;
-		driving_license=d;
-		national_id=n;
-		pending=true;
-		favourite_areas.add(a);
+		rides.add(r);
 	}
 	@Override
 	public void update(Ride r) {
 		// TODO Auto-generated method stub
-		rides.add(r);
+		rides.set(Ride.rideId-1,r);
 	}
 	public void print() 
 	{
@@ -57,5 +54,50 @@ public class Driver extends Person1 implements Observer {
 			}
 		}
 		return r;
+	}
+	public void add_to_favourites(Driver r,String area) 
+	{
+		r.favourite_areas.add(area);
+	}
+	public Boolean login(Driver driver)
+	{
+		for(int i=0;i<all_drivers.size();i++) 
+		{
+			if(all_drivers.get(i).username.equals(driver.username)) 
+			{
+				if(all_drivers.get(i).password.equals(driver.password) && !(all_drivers.get(i).pending)) 
+				{
+					return true;
+				}
+				else 
+					return false;
+			}
+		}
+		return false;
+		
+	}
+	public void set_Driver(String u,String p,String m,String e,String n,String d,String a)
+	{
+		username=u; 
+		mobile_number = m;
+		email=e;
+		password=p;
+		driving_license=d;
+		national_id=n;
+		pending=true;
+		favourite_areas.add(a);
+		balance=0;
+	}
+	public void register(Driver driver) 
+	{
+		
+		all_drivers.add(driver);
+	}
+	public void EndRide(Ride ride)
+	{
+		ride.Ride_Completed=true;
+		balance+=ride.price;
+		update(ride);
+		
 	}
 }
