@@ -6,7 +6,9 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) { 
 		// TODO Auto-generated method stub
-		Person1 p= new Person1("" , "");
+		Person1 person= new Person1("" , "");
+		User users = new User("","");
+	//	Ride rides = new Ride();
 		Scanner in =new Scanner(System.in);
 		System.out.println("Welcome to Uber");
 		Boolean x =true;
@@ -24,61 +26,65 @@ public class Main {
 					String username=in.nextLine();
 					System.out.println("Please Enter your password");
 					String password=in.nextLine();
-					Person1 v = new Driver(username,password);
-					if(p.Login(v)) 
+					Person1 driver = new Driver(username,password);
+					if(person.login(driver)) 
 					{
 						System.out.println("Login Successfully as a driver :)");
-						System.out.println("Do u want to add in ur favourite areas list OR List all Rides?");
+						System.out.println("Do u want to add in ur favourite areas list OR List all Rides or end the ride?");
 						Driver t = null;
-						for(int i=0;i<p.all_drivers.size();i++) 
+						for(int i=0;i<person.all_drivers.size();i++) 
 						{
-							if(p.all_drivers.get(i).username.equals(v.username)) 
+							if(person.all_drivers.get(i).username.equals(driver.username)) 
 							{
-								if(p.all_drivers.get(i).password.equals(v.password) && !(p.all_drivers.get(i).pending)) 
+								if(person.all_drivers.get(i).password.equals(driver.password) && !(person.all_drivers.get(i).pending)) 
 								{
-									t=p.all_drivers.get(i);
+									t=person.all_drivers.get(i);
 								}
 							}
 						}
 						String choice3=in.nextLine();
 						if(choice3.equals("add")) 
 						{
-							int index = p.all_drivers.indexOf(t);
+							int index = person.all_drivers.indexOf(t);
 							System.out.println("Please Enter the area");
 							String area=in.nextLine();//nafs tari2et el login hat5osh tedawar 3ala 3l driver
 							t.add_to_favourites(t, area);
-							p.all_drivers.set(index, t);
+							person.all_drivers.set(index, t);
 						}
 						else if(choice3.equals("list")) 
 						{
 							t.print();
 							System.out.println("Please Enter the username of user u want to suggest him a price");
-							String u = in.nextLine();
-							Ride r =t.getbyusername(u);
-							System.out.println(t.getbyusername(u).Destination+"	"+t.getbyusername(u).source+"	"+t.getbyusername(u).user.username);
-							int index = t.rides.indexOf(r);
-							int index2 = p.all_drivers.indexOf(t);
+							String username1 = in.nextLine();
+							Ride ride =t.getbyusername(username1);
+							
 							System.out.println("Please Enter the Price");
 							int price = Integer.parseInt(in.nextLine());
-							r.Set_price(price);
-							t.rides.set(index2, r);
-							p.all_drivers.set(index2,t);
-							Ride r2 = new Ride(r.source,r.Destination,t);
-							System.out.println(r2.Destination+"	"+r2.source+"	"+r2.user.username);
+							ride.Set_price(price);
 							MessagePublisher Subject = new MessagePublisher();
-							for(int i=0;i<p.all_users.size();i++) 
+							for(int i=0;i<person.all_users.size();i++) 
 							{
-								if(p.all_users.get(i).username.equals(r2.user.username)) 
+								if(person.all_users.get(i).username.equals(ride.user.username)) 
 								{
 									
-									if(p.all_users.get(i).password.equals(r2.user.password)) 
+									if(person.all_users.get(i).password.equals(ride.user.password)) 
 									{
-										Subject.attach(p.all_users.get(i));
+										Subject.attach(person.all_users.get(i));
 									}
 								}
 							}
-							Subject.notifyUpdate(r2);
+							Subject.notifyUpdate(ride);
 						}
+						else if(choice3.equals("end")) 
+						{
+							System.out.println("Please Enter the username of user u want to end his/her ride");
+							String username1 = in.nextLine();
+							Ride ride =t.getbyusername(username1);
+							t.EndRide(ride);
+							Ride.RideHistory.add(ride);
+							System.out.println("Ride ended successfully");
+						}
+						
 						
 					}
 					else
@@ -92,12 +98,9 @@ public class Main {
 					String username=in.nextLine();
 					System.out.println("Please Enter your password");
 					String password=in.nextLine();
-					/*for(int i=0;i<p.all_admins.size();i++) 
-					{
-						System.out.println(p.all_admins.get(i).username+"	"+p.all_admins.get(i).password);
-					}*/
-					Admin n = new Admin(username,password);
-					if(p.Login(n)) 
+				
+					Admin admin = new Admin(username,password);
+					if(person.login(admin)) 
 					{
 						System.out.println("Login Successfully as a Admin :)");
 						boolean y = true;
@@ -106,11 +109,11 @@ public class Main {
 							String choice3 = in.nextLine();
 							if(choice3.contains("l")) 
 							{
-								ArrayList <Driver> d = new ArrayList<Driver>();
-								d = p.list_allpending();
-								for(int i =0;i<d.size();i++) 
+								ArrayList <Driver> drivers = new ArrayList<Driver>();
+								drivers = admin.list_allpending();				
+								for(int i =0;i<drivers.size();i++) 
 								{
-									System.out.println(d.get(i).username+"	"+d.get(i).email+"	"+d.get(i).mobile_number+"	"+d.get(i).national_id+"	"+d.get(i).driving_license);
+									System.out.println(drivers.get(i).username+"	"+drivers.get(i).email+"	"+drivers.get(i).mobile_number+"	"+drivers.get(i).national_id+"	"+drivers.get(i).driving_license);
 								}
 							}
 							else if(choice3.contains("v"))
@@ -119,7 +122,7 @@ public class Main {
 								String driver_name=in.nextLine();
 								System.out.println("Please Enter the email of the Driver");
 								String driver_email=in.nextLine();
-								p.verify(driver_name,driver_email);
+								admin.verify(driver_name,driver_email);
 							}
 							else if(choice3.contains("q")) 
 							{
@@ -138,51 +141,67 @@ public class Main {
 					String username=in.nextLine();
 					System.out.println("Please Enter your password");
 					String password=in.nextLine();
-					User s = new User(username,password);
-					/*System.out.println(s.username);
-					System.out.println(s.password);
-					for(int i=0;i<p.all_users.size();i++) 
-					{
-						System.out.println(p.all_users.get(i).username+"	"+p.all_users.get(i).password);
-					}
-					System.out.println(p.Login(s));*/
-									
-					if(p.Login(s)) 
+					User user = new User(username,password);
+							
+					if(person.login(user)) 
 					{
 						System.out.println("Login Successfully as a User :)");
-						System.out.println("Do u want to request a ride or see ur ride");
-						String c = in.nextLine();
-						if(c.equals("ride")) 
+						System.out.println("Do u want to request a ride, see ur ride, list all ride offers, or rate your ride");
+						String input = in.nextLine();
+						if(input.equals("ride")) 
 						{
 							System.out.println("Please Enter the Source area's Name");
 							String src=in.nextLine();					
 							System.out.println("Please Enter the Destination area's Name");
 							String dest=in.nextLine();
-							Ride r = new Ride(src,dest,s);
+							Ride r = new Ride(src,dest,user);
 							MessagePublisher Subject = new MessagePublisher();
-							for (int i =0;i<p.all_drivers.size();i++) 
+							for (int i =0;i<person.all_drivers.size();i++) 
 							{
-								for(int j=0;j<p.all_drivers.get(i).favourite_areas.size();j++) 
+								for(int j=0;j<person.all_drivers.get(i).favourite_areas.size();j++) 
 								{
-									if(p.all_drivers.get(i).favourite_areas.get(j).equals(src)) 
+									if(person.all_drivers.get(i).favourite_areas.get(j).equals(src)) 
 									{
-										Subject.attach(p.all_drivers.get(i));
+										Subject.attach(person.all_drivers.get(i));
 									}
 								}
 							}
 							Subject.notifyUpdate(r);
 						}
-						else if(c.equals("list")) 
+						else if(input.equals("list")) 
 						{
-							for(int i=0;i<p.all_users.size();i++) 
+							MessagePublisher Subject = new MessagePublisher();
+							user.print();
+							System.out.println("do you want to select a specific offer");
+							String inp = in.nextLine();
+							if(inp.equals("yes"))
 							{
-								if(p.all_users.get(i).username.equals(s.username)) 
+								System.out.println("enter the ride number");
+								int number = Integer.parseInt(in.nextLine());
+								for(int i=0;i<user.rides.size(); i++)
 								{
-									
-									if(p.all_users.get(i).password.equals(s.password)) 
-									{
-										p.all_users.get(i).print();
-									}
+									if(user.rides.get(i).equals(user.rides.get(number-1)))
+									Subject.attach(user.rides.get(i).driver);
+									else
+										System.out.println("not an available choice");
+								}
+							
+							}
+								
+							
+						}
+						
+						else if(input.equals("rate"))
+						{
+							System.out.println("Please enter the ride id");
+							int id = Integer.parseInt(in.nextLine()); 
+							System.out.println("Please enter the rate");
+							double rate = Double.parseDouble(in.nextLine());
+							for(int i=0; i<user.UserHistory.size();i++)
+							{
+								if(user.UserHistory.get(i).equals(user.UserHistory.get(id-1)))
+								{
+									//User.rate(users.UserHistory.get(i),rate);
 								}
 							}
 						}
@@ -215,9 +234,9 @@ public class Main {
 					String license=in.nextLine();
 					System.out.println("Please Enter your Source area");
 					String area=in.nextLine();
-					Driver d = new Driver(username,password);
-					d.set_Driver(username,password,mobile,email,id,license,area);
-					p.all_drivers.add(d);
+					Driver driver = new Driver(username,password);
+					driver.set_Driver(username,password,mobile,email,id,license,area);
+					driver.register(driver);
 				}
 				else if(choice2.contains("n"))//admin
 				{
@@ -225,8 +244,8 @@ public class Main {
 					String username=in.nextLine();
 					System.out.println("Please Enter your password");
 					String password=in.nextLine();
-					Admin a = new Admin(username,password);
-					p.all_admins.add(a);
+					Admin admin = new Admin(username,password);
+					admin.register(admin);
 				}
 				else if(choice2.contains("s"))//user
 				{
@@ -238,9 +257,9 @@ public class Main {
 					String mobile=in.nextLine();
 					System.out.println("Please Enter your email");
 					String email=in.nextLine();
-					User u = new User(username,password);
-					u.set_User(username,mobile,email,password);
-					p.all_users.add(u);
+					User user = new User(username,password);
+					user.set_User(username,mobile,email,password);
+					user.register(user);
 				}
 				else 
 				{
