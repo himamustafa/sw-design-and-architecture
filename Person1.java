@@ -11,12 +11,10 @@ public class Person1
 	public static ArrayList<Driver> all_drivers = new ArrayList  <Driver>();
 	public Subject s = new MessagePublisher();
 	
-	
-	Person1(){
+	Person1()
+	{
 		
-	 }
-	
-	
+	}
 	Person1(String x, String y){
 		 username=x;
 		 password=y;
@@ -25,7 +23,6 @@ public class Person1
 	{
 		return true;
 	}
-	
 	
 	public void register(Person1 person) 
 	{
@@ -42,6 +39,10 @@ public class Person1
 		{
 			s.attach(d.get(j));
 		}
+	}
+	public void update(Ride r) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 	
