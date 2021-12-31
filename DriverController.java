@@ -10,24 +10,31 @@ import org.springframework.web.bind.annotation.RestController;
 
  
 @RestController
-public class DriverController extends Person1{
-
-	
+public class DriverController{
+Actor person;
+	DriverEntity entity;
 	@PostMapping("driverregister/{username}/{password}/{mobilenumber}/{email}/{driverlicense}/{nationalid}/{area}")
 	public void register(@PathVariable("username") String username,@PathVariable("password") String password,@PathVariable("mobilenumber") String mobile_number,@PathVariable("email") String email,@PathVariable("nationalid") String national_id,@PathVariable("driverlicense") String driver_license,@PathVariable("area") String area)
 	{
 		Driver driver = new Driver();
-		driver.set_Driver(username,password,mobile_number,email,national_id,driver_license,area);
-		all_drivers.add(driver);
+		entity.setUsername(username);
+		entity.setPassword(password);
+		entity.setMobile_number(mobile_number);
+		entity.setEmail(email);
+		entity.setDriving_license(driver_license);
+		entity.setNational_id(national_id);
+		entity.setFav_area(area);
+		driver.set_Driver(entity);
+		person.all_drivers.add(driver);
 	}
 	@GetMapping("driverlogin/{username}/{password}")
 	public Boolean login(@PathVariable("username") String username,@PathVariable("password") String password)
 	{
-		for(int i=0;i<all_drivers.size();i++) 
+		for(int i=0;i<person.all_drivers.size();i++) 
 		{
-			if(all_drivers.get(i).username.equals(username)) 
+			if(person.all_drivers.get(i).username.equals(username)) 
 			{
-				if(all_drivers.get(i).password.equals(password) && !(all_drivers.get(i).pending)) 
+				if(person.all_drivers.get(i).password.equals(password) && !(person.all_drivers.get(i).pending)) 
 				{
 					return true;
 				}
@@ -52,6 +59,7 @@ public class DriverController extends Person1{
 		Driver driverr = new Driver();
 		driverr.add_to_favourites(driver,area);
 	}
+	
 
 
 }
