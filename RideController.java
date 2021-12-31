@@ -1,5 +1,7 @@
 package com.example.uber;
 
+import java.util.ArrayList;
+
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,65 +16,106 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class RideController {
-	private DistanceTime distance;
-   
-	Person1 person = new Person1();
-@GetMapping("/google/{picking_up}/{dropping_off}")
-   public ModelAndView Api(@PathVariable("picking_up") String source,@PathVariable("dropping_off") String destination) {
-           try {
-                 //method of DistanceTime Class
-        	   Ride ride = new Ride();
-        	   ride.setDistance(distance);
-               String response=distance.calculate(source,destination);
-           System.out.println(response);
-          /* JSONParser parser = new JSONParser(response);
-           try {
-
-            Object obj = parser.parse();
-            JSONObject jsonobj=(JSONObject)obj;
-
-            JSONArray dist=(JSONArray)jsonobj.get("rows");
-            JSONObject obj2 = (JSONObject)dist.get(0);
-            JSONArray disting=(JSONArray)obj2.get("elements");
-            JSONObject obj3 = (JSONObject)disting.get(0);
-            JSONObject obj4=(JSONObject)obj3.get("distance");
-            JSONObject obj5=(JSONObject)obj3.get("duration");
-            System.out.println(obj4.get("text"));
-            System.out.println(obj5.get("text"));
-
-       }
-   catch(Exception e) {
-       e.printStackTrace();
-   }*/
-           }
-           catch(Exception e) {
-               System.out.println("Exception Occurred");
-           }
-           return new ModelAndView("home");
-       }
-Ride ride= new Ride();
-Driver driver = new Driver();
-@PostMapping("/requestride/{username}/{source}/{destination}")
-public void request(@PathVariable("username") String username,@PathVariable("source")String source,@PathVariable("destination")String destination)
-{
-	for(int i =0; i<person.all_users.size();i++)
+		private DistanceTime distance;
+	  
+		Actor person = new Actor();
+	
+	Ride ride= new Ride();
+	Driver driver = new Driver();
+	Driver drivers = new Driver(driver);
+	MessagePublisher subject1 = new MessagePublisher();
+	@PostMapping("/requestride/{username}/{source}/{destination}")
+	public void request(@PathVariable("username") String username,@PathVariable("source")String source,@PathVariable("destination")String destination)
 	{
-		if(person.all_users.get(i).username.equals(username))
+		for(int i =0; i<person.all_users.size();i++)
 		{
-			Ride.set_ride(source,destination,person.all_users.get(i));
+			if(person.all_users.get(i).username.equals(username))
+			{
+				Ride.set_ride(source,destination,person.all_users.get(i));
+			}
+		}
+		for(int i=0;i<driver.favourite_areas.size();i++)
+		{
+			if(source.equals(driver.favourite_areas))
+			{
+				subject1.attach(driver);
+				driver.attachSubject(subject1);
+				subject1.notifyUpdate();
+			}
+		}
+		
+	}
+	OfferEntity entity;
+	OfferModel model;
+	User user = new User();
+	User users = new User(user);
+	MessagePublisher subject2 = new MessagePublisher();
+	@PostMapping("/endride/{rideId}")
+	public String end_ride(@PathVariable("rideId") int rideId)
+	{
+		for(int i=0; i<driver.rides.size(); i++)
+		{
+			if(driver.rides.get(i).rideId==rideId)
+			{
+				ride.EndRide(driver.rides.get(i));
+				return "ride ended successfully";
+			}
+		}
+		ride.EndRide(ride);
+		return "ride ended successfully";
+	}
+	@PostMapping("/selectride/{username}")
+	public void selectRide(@PathVariable("username") String username)
+	{
+		ride.selectRide(username);
+	}
+	@PostMapping("/price/{driverusername}/{rideid}/{price}")
+	public void setOffer(@PathVariable("driverusername")String username,@PathVariable("price") double price,@PathVariable("rideid") int rideId)
+	{
+		entity.setPrice(price);
+		entity.setRideId(rideId);
+		model.save(entity);
+		for(int p=0;p<person.all_drivers.size();p++)
+		{
+			if(person.all_drivers.get(p).username.equals(username))
+			{
+				entity.setDriver(person.all_drivers.get(p));
+			}
+		}
+		for(int i=0;i<person.all_users.size();i++)
+		{
+			if(rideId==(ride.getbyusername(person.all_users.get(i).username).rideId))
+			{
+				subject2.attach(person.all_users.get(i));
+				person.all_users.get(i).attachSubject(subject2);
+				subject2.notifyUpdate();
+			}
+		}
+		
+	}
+	@PostMapping("/updateprice/{rideid}/{price}")
+	public void updateOffer(@PathVariable("price") double price,@PathVariable("rideid") int rideId)
+	{
+		model.updateOffer(rideId,price);
+		for(int i=0;i<person.all_users.size();i++)
+		{
+			if(rideId==(ride.getbyusername(person.all_users.get(i).username).rideId))
+			{
+				subject2.attach(person.all_users.get(i));
+				person.all_users.get(i).attachSubject(subject2);
+				subject2.notifyUpdate();
+			}
 		}
 	}
 	
-}
-@PostMapping("/endride")
-public String end_ride()
-{
-	driver.EndRide(ride);
-	return "ride ended successfully";
-}
-@PostMapping("/price/{price}")
-public void setprice(@PathVariable("price") double price)
-{
-	ride.Set_price(price);
-}
+	@PostMapping("/deleteoffer/{rideid}")
+	public void deleteOffer(@PathVariable("rideid") int rideId)
+	{
+		model.deleteOffer(rideId);
+	}
+	@GetMapping("/listOffers/rideId")
+	public ArrayList<OfferEntity> listOffers(@PathVariable("rideId") int rideId)
+	{
+		return ride.listOffers(rideId);
+	}
 }
