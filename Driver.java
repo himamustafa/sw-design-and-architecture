@@ -1,8 +1,8 @@
-package app;
+package com.example.uber;
 
 import java.util.ArrayList;
 
-public class Driver extends Person1 implements Observer {
+public class Driver extends Actor implements Observer {
 	public ArrayList <Ride> rides = new ArrayList <Ride>();
 	public ArrayList <Ride> DriverHistory = new ArrayList <Ride>();
 	Driver(String x, String y) {
@@ -10,6 +10,15 @@ public class Driver extends Person1 implements Observer {
 		username=x;
 		password=y;
 		// TODO Auto-generated constructor stub
+	}
+	Driver()
+	{
+		
+	}
+	private Subject subject;
+	Driver(Driver driver)
+	{
+		
 	}
 	String username;
 	String mobile_number;
@@ -26,8 +35,7 @@ public class Driver extends Person1 implements Observer {
 	{
 		rides.add(r);
 	}
-	@Override
-	public void update(Ride r) {
+	public void updateride(Ride r) {
 		// TODO Auto-generated method stub
 		rides.set(Ride.rideId-1,r);
 	}
@@ -42,30 +50,19 @@ public class Driver extends Person1 implements Observer {
 		}
 		System.out.println();
 	}
-	public Ride getbyusername(String username) 
-	{
-		//Ride r = rides.get(0);
-		Ride r =null;
-		for(int i =0;i<rides.size();i++) 
-		{
-			if(rides.get(i).user.username.equals(username)) 
-			{
-				r=rides.get(i);
-			}
-		}
-		return r;
-	}
+	
 	public void add_to_favourites(Driver r,String area) 
 	{
 		r.favourite_areas.add(area);
 	}
+	DriverEntity driverentity;
 	public Boolean login(Driver driver)
 	{
 		for(int i=0;i<all_drivers.size();i++) 
 		{
 			if(all_drivers.get(i).username.equals(driver.username)) 
 			{
-				if(all_drivers.get(i).password.equals(driver.password) && !(all_drivers.get(i).pending)) 
+				if(all_drivers.get(i).password.equals(driver.password) && !(all_drivers.get(i). driverentity.getPending())) 
 				{
 					return true;
 				}
@@ -76,28 +73,35 @@ public class Driver extends Person1 implements Observer {
 		return false;
 		
 	}
-	public void set_Driver(String u,String p,String m,String e,String n,String d,String a)
+	public void set_Driver(DriverEntity entity)
 	{
-		username=u; 
-		mobile_number = m;
-		email=e;
-		password=p;
-		driving_license=d;
-		national_id=n;
-		pending=true;
-		favourite_areas.add(a);
+		entity.setUsername(entity.username);
+		entity.setMobile_number(entity.mobile_number);
+		entity.setEmail(entity.email);
+		entity.setPassword(entity.password);
+		entity.setDriving_license(entity.driving_license);
+		entity.setNational_id(entity.national_id);
+		entity.setPending(true);
+		favourite_areas.add(entity.fav_area);
 		balance=0;
 	}
 	public void register(Driver driver) 
 	{
-		
 		all_drivers.add(driver);
 	}
-	public void EndRide(Ride ride)
-	{
-		ride.Ride_Completed=true;
-		balance+=ride.price;
-		update(ride);
-		
+	
+		@Override
+		public void update() 
+		{
+			// TODO Auto-generated method stub
+			System.out.println("notified");
+		}
+
+		@Override
+		public void attachSubject(Subject j) 
+		{
+			// TODO Auto-generated method stub
+			subject = j;
+		}
+	
 	}
-}
