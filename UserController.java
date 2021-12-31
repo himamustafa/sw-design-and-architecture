@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserController extends Person1 {
-	
+public class UserController {
+	Actor person;
+	UserEntity entity;
 	@PostMapping("/userregister/{username}/{password}/{mobilenumber}/{email}")
 	public void register(@PathVariable("username") String username,@PathVariable("password") String password,@PathVariable("mobilenumber") String mobile_number,@PathVariable("email") String email)
 	{
 		User user = new User();
-		user.set_User(username,mobile_number,email,password);
+		entity.setUsername(username);
+		entity.setPassword(password);
+		entity.setMobile_number(mobile_number);
+		entity.setEmail(email);
+		user.set_User(entity);
 		user.register(user);
 		System.out.print("added");
 	}
@@ -20,14 +25,14 @@ public class UserController extends Person1 {
 	public Boolean user_login(@PathVariable("username") String username,@PathVariable("password") String password)
 	{
 		User user = new User();
-		for(int i=0;i<all_users.size();i++) 
+		for(int i=0;i<person.all_users.size();i++) 
 		{
-			if(all_users.get(i).username.equals(username)) 
+			if(person.all_users.get(i).username.equals(username)) 
 			{
-				System.out.print(all_users.get(i).username);
-				if(all_users.get(i).password.equals(password)) 
+				System.out.print(person.all_users.get(i).username);
+				if(person.all_users.get(i).password.equals(password)) 
 				{
-					System.out.print(all_users.get(i).password);
+					System.out.print(person.all_users.get(i).password);
 					return true;
 				}
 				else 
@@ -37,11 +42,11 @@ public class UserController extends Person1 {
 		return false;
 	}
 	
-	@GetMapping("/listuserrides")
+	@GetMapping("/listuserhistory")
 	public void list_rides()
 	{
 		User user = new User();
-		user.print();
+		user.listRides();
 	}
 
 }
