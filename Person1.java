@@ -2,7 +2,7 @@ package com.example.uber;
 
 import java.util.ArrayList;
 
-public class Person1 
+public class Actor 
 {
 	String username;
 	String password;
@@ -11,20 +11,20 @@ public class Person1
 	public static ArrayList<Driver> all_drivers = new ArrayList  <Driver>();
 	public Subject s = new MessagePublisher();
 	
-	Person1()
+	Actor()
 	{
 		
 	}
-	Person1(String x, String y){
+	Actor(String x, String y){
 		 username=x;
 		 password=y;
 	 }
-	public Boolean login(Person1  person) 
+	public Boolean login(Actor  person) 
 	{
 		return true;
 	}
 	
-	public void register(Person1 person) 
+	public void register(Actor person) 
 	{
 		
 	}
