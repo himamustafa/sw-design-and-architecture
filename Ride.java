@@ -1,7 +1,11 @@
 package com.example.uber;
 
+import java.util.ArrayList;
+
 public class Ride 
 {
+	OfferEntity offer;
+	OfferModel model;
 	private DistanceTime distance;
 	static int rideId;
 	int Id=0;
@@ -9,7 +13,8 @@ public class Ride
 	static String Destination;
 	static User user;
 	Driver driver;
-	static double price;
+	Actor person;
+	//static double price;
 	boolean Ride_Completed= false;
 	double RideRate=0;
 	Ride()
@@ -21,7 +26,6 @@ public class Ride
 		source=s;
 		Destination=d;
 		user =u;
-		price=-1;
 		Id++;
 		rideId = Id;
 	}
@@ -30,12 +34,7 @@ static public void set_ride(String s,String d, User u)
 	source=s;
 	Destination=d;
 	user =u;
-	price=-1;
 }
-	public void Set_price(double p) 
-	{
-		price =p;
-	};
 	public Ride getbyusername(String username) 
 	{
 		Ride r =null;
@@ -48,8 +47,63 @@ static public void set_ride(String s,String d, User u)
 		}
 		return r;
 	}
-	public void setDistance(DistanceTime distance) {
+	public void EndRide(Ride ride)
+	{
+		Ride_Completed=true;
+		driver.balance+=model.getOffer(ride.rideId).getPrice();
+		driver.DriverHistory.add(ride);
+		user.UserHistory.add(ride);
+	}
+	MessagePublisher subject1 = new MessagePublisher();
+	public void selectRide(String username)
+	{
+		Driver driver = null;
+		for(int p=0;p<person.all_drivers.size();p++)
+		{
+			if(person.all_drivers.get(p).username.equals(username))
+			{
+				driver = person.all_drivers.get(p);
+				subject1.attach(driver);
+				driver.attachSubject(subject1);
+				subject1.notifyUpdate();
+			}
+		}
+		
+		for(int i=0;i<model.offers.size();i++)
+		{
+			if(model.offers.get(i).getDriver().equals(driver))
+			{
+				for(int y=0;y<driver.rides.size();y++)
+				{
+					if(driver.rides.get(y).rideId==model.offers.get(i).getRideId())
+					{
+						StartRide(driver.rides.get(y));
+					}
+				}
+			}
+		}
+	}
+	public void StartRide(Ride ride)
+	{
+			offer = model.getOffer(ride.rideId);
+			user.rides.add(ride);
+			driver.rides.add(ride);
+	}
+	public void setDistance(DistanceTime distance) 
+		{
 		   this.distance = distance;
 		}
+	ArrayList<OfferEntity> useroffers = new ArrayList<OfferEntity>();
+	public ArrayList<OfferEntity> listOffers(int rideId)
+	{
+		for(int i=0;i<model.offers.size();i++)
+		{
+			if(rideId==model.offers.get(i).getRideId())
+			{
+				 useroffers.add(model.offers.get(i));
+			}
+		}
+		return useroffers; 
+	}
 	
 }
