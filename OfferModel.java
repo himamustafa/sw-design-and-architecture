@@ -3,11 +3,11 @@ package com.example.uber;
 import java.util.ArrayList;
 
 public class OfferModel {
-	private ArrayList<OfferEntity> offers = new ArrayList<OfferEntity>();
+	public ArrayList<OfferEntity> offers = new ArrayList<OfferEntity>();
 OfferEntity test = new OfferEntity();
-	public void save(OfferEntity entiry)
+	public void save(OfferEntity entity)
 	{
-		offers.add(entiry);
+		offers.add(entity);
 	}
 	public OfferEntity getOffer(int rideId)
 	{
