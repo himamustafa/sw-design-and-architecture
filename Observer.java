@@ -1,8 +1,9 @@
-package app;
+package com.example.uber;
 
 import java.util.ArrayList;
 
 public interface Observer 
 {
-    public void update(Ride r);
+    public void update();
+    public void attachSubject(Subject j);
 }
