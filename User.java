@@ -1,11 +1,12 @@
-package app;
+package com.example.uber;
 
 import java.util.ArrayList;
 
-public class User  extends Person1   implements Observer
+public class User extends Actor implements Observer
 {
-	public static ArrayList <Ride> UserHistory = new ArrayList <Ride>();	
-	//public ArrayList <User> users = new ArrayList <User>(); 
+	private Subject subject;
+	public ArrayList <Ride> UserHistory = new ArrayList <Ride>();	
+	OfferEntity offer;
 	public ArrayList <Ride> rides = new ArrayList <Ride>();
 	User(String x, String y) {
 		super(x, y);
@@ -13,17 +14,21 @@ public class User  extends Person1   implements Observer
 		password =y;
 		// TODO Auto-generated constructor stub
 	}
-	String username;
-	String mobile_number;
-	String email;
-	String password;
-	Person1 person = new Person1(username,password);
-	public void set_User(String u,String m,String e,String p)
+	User()
 	{
-		username =u;
-		mobile_number = m;
-		email= e;
-		password =p;
+		
+	}
+	User(User user)
+	{
+		
+	}
+	Actor person = new Actor(username,password);
+	public void set_User(UserEntity entity)
+	{
+		entity.setUsername(entity.username);
+		entity.setMobile_number(entity.mobile_number);
+		entity.setEmail(entity.email);
+		entity.setPassword(entity.password);
 
 	}
 	public void add(Ride r)
@@ -31,8 +36,7 @@ public class User  extends Person1   implements Observer
 		rides.add(r);
 	}
 	@Override
-	public void update(Ride r) 
-	{
+	public void update(Ride r) {
 		// TODO Auto-generated method stub
 		rides.set(Ride.rideId-1,r);
 	}
@@ -41,9 +45,13 @@ public class User  extends Person1   implements Observer
 		for(int i =0;i<rides.size();i++) 
 		{
 			System.out.print(rides.get(i).source+" -> "+rides.get(i).Destination+"	");
-			System.out.print("With Price: "+rides.get(i).price+"	");
+			System.out.print("With Price: "+rides.get(i).offer.getPrice()+"	");
 			System.out.print("From Driver: "+rides.get(i).driver.username);
 		}
+	}
+	public ArrayList<Ride> listRides()
+	{
+			return UserHistory;
 	}
 	public Boolean login(User user)
 	{
@@ -70,27 +78,27 @@ public class User  extends Person1   implements Observer
 	}
 	public void rate(Ride ride, double rate)
 	{
-		ride.RideRate = rate;
-		update(ride);
-	}
-	public void start_ride(Ride ride)
-	{
-		
-	}
-	/*public void list_rides(User user)
-	{
-		for(int i=0;i<all_users.size();i++) 
+		for(int i=0;i<UserHistory.size();i++)
 		{
-			if(all_users.get(i).username.equals(user.username)) 
+			if(ride.rideId == UserHistory.get(i).rideId)
 			{
-				
-				if(all_users.get(i).password.equals(user.password)) 
-				{
-					all_users.get(i).print();
-				}
+				ride.RideRate = rate;
+				update(ride);
 			}
 		}
-	}*/
-	
+	}
+	@Override
+	public void update() 
+	{
+		// TODO Auto-generated method stub
+		System.out.println("notified");
+	}
+
+	@Override
+	public void attachSubject(Subject j) 
+	{
+		// TODO Auto-generated method stub
+		subject = j;
+	}
 	
 }
