@@ -1,4 +1,4 @@
-package app;
+package com.example.uber;
 import java.util.ArrayList;
 import java.util.List;
  
@@ -17,9 +17,11 @@ public class MessagePublisher implements Subject {
     }
  
     @Override
-    public void notifyUpdate(Ride r) {
-        for(Observer o: observers) {
-            o.update(r);
+    public void notifyUpdate() 
+    {
+        for(Observer o: observers) 
+        {
+            o.update();
         }
     }
 }
