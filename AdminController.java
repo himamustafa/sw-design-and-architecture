@@ -27,9 +27,7 @@ public class AdminController {
 	@PostMapping("adminverify/{driverusername}/{driveremail}")
 	public void verify(@PathVariable("driverusername") String username, @PathVariable("driveremail") String email)
 	{
-		
 		admin.verify(username,email);
-		
 	}
 	@GetMapping("/pendingdrivers")
 	public ArrayList <Driver>  list_drivers()
