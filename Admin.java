@@ -1,22 +1,26 @@
-package app;
+package com.example.uber;
 
 import java.util.ArrayList;
 
-public class Admin extends Person1 {
-	Admin(String x, String y) {
-		
+public class Admin extends Actor {
+	
+public Admin() {
+	super();
+	 	}
+	
+	public Admin(String x, String y) 
+	{
 		super(x, y);
 		username=x;
 		password=y;
 	}
-	String username;
-	String password;
-
-
+DriverEntity entity;
 public void verify(String driver_username,String driver_email) 
 {
-	for(int i =0;i<all_drivers.size();i++) {
-		if(all_drivers.get(i).username.equals(driver_username) && all_drivers.get(i).email.equals(driver_email) ) {
+	for(int i =0;i<all_drivers.size();i++)
+	{
+		if(all_drivers.get(i).username.equals(driver_username) && all_drivers.get(i).email.equals(driver_email) ) 
+		{
 			all_drivers.get(i).pending=false;
 		}
 	}
